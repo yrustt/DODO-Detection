@@ -1,0 +1,29 @@
+[project]
+name = "dodo-detection"
+version = "0.1.0"
+description = ""
+authors = [
+    {name = "Рустам Юнусов",email = "r.yunuso@n3-tech.ru"}
+]
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = [
+    "torch (==2.7.1+cpu)",
+    "torchvision (==0.22.1+cpu)",
+    "ultralytics (>=8.4.26,<9.0.0)"
+]
+
+
+[build-system]
+requires = ["poetry-core>=2.0.0,<3.0.0"]
+build-backend = "poetry.core.masonry.api"
+
+[[tool.poetry.source]]
+name = "torch_cpu"
+url = "https://download.pytorch.org/whl/cpu"
+priority = "supplemental"
+
+
+[tool.poetry.dependencies]
+torch = {source = "torch_cpu"}
+torchvision = {source = "torch_cpu"}
