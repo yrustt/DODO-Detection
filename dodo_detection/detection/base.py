@@ -28,7 +28,8 @@ class VideoDetector:
 
     def visualize(self, frame, processed):
         for object_data in processed:
-            (x1, y1), (x2, y2), color, label = object_data
+            (x1, y1), (x2, y2) = object_data['coords']
+            color, label = object_data['color'], object_data['label']
             cv2.rectangle(frame, (x1, y1), (x2, y2), color, 2)
             cv2.putText(frame, label, (x1, y1 - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.6, color, 2)
 
@@ -38,4 +39,4 @@ class VideoDetector:
     def init(self):
         self.model = YOLO(self.YOLO_MODEL)
         self.processor = self.PROCESSING_CLASS()
-        # cv2.namedWindow('Detection', cv2.WINDOW_NORMAL)
+        cv2.namedWindow('Detection', cv2.WINDOW_GUI_NORMAL)
