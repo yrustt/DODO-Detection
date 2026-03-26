@@ -1,4 +1,3 @@
-import time
 from enum import Enum
 from operator import itemgetter
 from typing import NoReturn
@@ -195,7 +194,9 @@ class Processor:
                                 }
                             ]
                         )
-                        self._actions = pd.concat([self._actions, new_row], ignore_index=True)
+                        self._actions = pd.concat(
+                            [self._actions, new_row], ignore_index=True
+                        )
 
                     break
             else:
@@ -213,7 +214,9 @@ class Processor:
                             }
                         ]
                     )
-                    self._actions = pd.concat([self._actions, new_row], ignore_index=True)
+                    self._actions = pd.concat(
+                        [self._actions, new_row], ignore_index=True
+                    )
 
         return tables
 
