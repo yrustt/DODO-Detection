@@ -1,3 +1,5 @@
+from functools import cached_property
+
 import cv2
 
 
@@ -11,7 +13,8 @@ class FrameIterator:
 
     def __enter__(self):
         self.cap = cv2.VideoCapture(self.video_name)
-        self.cap.set(cv2.CAP_PROP_POS_MSEC, 8 * 60 * 1000)
+        _ = self.frame_count
+        _ = self.output
 
         return self
 
@@ -31,3 +34,18 @@ class FrameIterator:
             raise StopIteration
 
         return frame
+
+    @cached_property
+    def frame_count(self):
+        return self.cap.get(cv2.CAP_PROP_FRAME_COUNT)
+
+    @cached_property
+    def output(self):
+        fps = int(self.cap.get(cv2.CAP_PROP_FPS))
+        width = int(self.cap.get(cv2.CAP_PROP_FRAME_WIDTH))
+        height = int(self.cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
+
+        fourcc = cv2.VideoWriter_fourcc(*"mp4v")
+        out = cv2.VideoWriter("output.mp4", fourcc, fps, (width, height))
+
+        return out

@@ -17,7 +17,7 @@ class ObjectTypes(Enum):
 DARK_BLUE_COLOR = (255, 0, 0)
 GREEN_COLOR = (0, 255, 0)
 RED_COLOR = (0, 0, 255)
-BLUE_COLOR = (0, 128, 255)
+BLUE_COLOR = (230, 216, 173)
 
 
 class Processor:

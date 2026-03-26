@@ -1,4 +1,5 @@
 import cv2
+from tqdm import tqdm
 from ultralytics import YOLO
 
 from dodo_detection.detection.capture import FrameIterator
@@ -23,21 +24,23 @@ class VideoDetector:
         self.init()
 
         with FrameIterator(self.video_name) as frame_iterator:
-            for idx, frame in enumerate(frame_iterator):
+            for idx, frame in tqdm(
+                enumerate(frame_iterator), total=frame_iterator.frame_count
+            ):
                 # extracted_walkings = self.detect_walking(frame)
                 extracted = self.detect(frame)
 
                 processed = self.processor.run(idx, extracted)
 
-                self.visualize(frame, processed)
+                self.visualize(frame, processed, frame_iterator.output)
 
     def detect(self, frame):
         """
-        Обнаруживаем объекты людей и столов
+        Обнаруживаем объекты людей и столов. Используется cpu версия библиотеки.
         """
 
         extracted = self.model.track(
-            frame, conf=0.15, persist=True, stream=False, classes=[0, 60]
+            frame, conf=0.15, persist=True, stream=False, classes=[0, 60], verbose=False
         )
 
         return extracted
@@ -71,7 +74,7 @@ class VideoDetector:
 
         return walkings
 
-    def visualize(self, frame, processed):
+    def visualize(self, frame, processed, output):
         """
         Отрисовка результата.
         """
@@ -84,8 +87,12 @@ class VideoDetector:
                 frame, label, (x1, y1 - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.6, color, 2
             )
 
-        cv2.imshow("Detection", frame)
-        cv2.waitKey(1)
+        if self.need_visualize:
+            cv2.imshow("Detection", frame)
+            cv2.waitKey(1)
+
+        if self.need_write_video:
+            output.write(frame)
 
     def init(self):
         """
@@ -95,7 +102,8 @@ class VideoDetector:
         self.model = YOLO(self.YOLO_MODEL)
         self.processor = self.PROCESSING_CLASS()
 
-        cv2.namedWindow("Detection", cv2.WINDOW_GUI_NORMAL)
+        if self.need_visualize:
+            cv2.namedWindow("Detection", cv2.WINDOW_GUI_NORMAL)
 
         self.fgbg = cv2.createBackgroundSubtractorMOG2(
             history=500, varThreshold=36, detectShadows=True

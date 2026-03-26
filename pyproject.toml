@@ -12,7 +12,8 @@ dependencies = [
     "torchvision (==0.22.1+cpu)",
     "ultralytics (>=8.4.26,<9.0.0)",
     "shapely (>=2.1.2,<3.0.0)",
-    "pandas (==2.3)"
+    "pandas (==2.3)",
+    "tqdm (>=4.67.3,<5.0.0)"
 ]
 
 
