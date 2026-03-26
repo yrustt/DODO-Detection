@@ -4,11 +4,13 @@ from ultralytics import YOLO
 
 from dodo_detection.detection.capture import FrameIterator
 from dodo_detection.processing.base import Processor, BLUE_COLOR
+from dodo_detection.reporting.base import Reporter
 
 
 class VideoDetector:
     YOLO_MODEL = "yolo26x.pt"
     PROCESSING_CLASS = Processor
+    REPORTING_CLASS = Reporter
 
     def __init__(
         self,
@@ -24,15 +26,18 @@ class VideoDetector:
         self.init()
 
         with FrameIterator(self.video_name) as frame_iterator:
-            for idx, frame in tqdm(
-                enumerate(frame_iterator), total=frame_iterator.frame_count
-            ):
-                # extracted_walkings = self.detect_walking(frame)
-                extracted = self.detect(frame)
+            try:
+                for idx, frame in tqdm(
+                    enumerate(frame_iterator), total=frame_iterator.frame_count
+                ):
+                    # extracted_walkings = self.detect_walking(frame)
+                    extracted = self.detect(frame)
 
-                processed = self.processor.run(idx, extracted)
+                    processed = self.processor.run(idx, extracted)
 
-                self.visualize(frame, processed, frame_iterator.output)
+                    self.visualize(frame, processed, frame_iterator.output)
+            finally:
+                self.reporter.write(self.processor.actions, frame_iterator.frame_count)
 
     def detect(self, frame):
         """
@@ -101,6 +106,7 @@ class VideoDetector:
 
         self.model = YOLO(self.YOLO_MODEL)
         self.processor = self.PROCESSING_CLASS()
+        self.reporter = self.REPORTING_CLASS()
 
         if self.need_visualize:
             cv2.namedWindow("Detection", cv2.WINDOW_GUI_NORMAL)

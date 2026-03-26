@@ -195,7 +195,9 @@ class Processor:
                                 }
                             ]
                         )
-                        pd.concat([self._actions, new_row], ignore_index=True)
+                        self._actions = pd.concat([self._actions, new_row], ignore_index=True)
+
+                    break
             else:
                 # Если стол был занят, а сейчас свободен, то записываем время этого события.
                 if last_action is None or last_action.value == 1:
@@ -207,10 +209,14 @@ class Processor:
                                 "x2": table["coords"][1][0],
                                 "y2": table["coords"][1][1],
                                 "value": 0,
-                                "time": time.time(),
+                                "time": self._frame_id,
                             }
                         ]
                     )
-                    pd.concat([self._actions, new_row], ignore_index=True)
+                    self._actions = pd.concat([self._actions, new_row], ignore_index=True)
 
         return tables
+
+    @property
+    def actions(self):
+        return self._actions
