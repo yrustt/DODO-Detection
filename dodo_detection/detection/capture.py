@@ -7,6 +7,7 @@ class FrameIterator:
 
     def __enter__(self):
         self.cap = cv2.VideoCapture(self.video_name)
+        self.cap.set(cv2.CAP_PROP_POS_MSEC, 8 * 60 * 1000)
 
         return self
 
