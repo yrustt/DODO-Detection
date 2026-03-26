@@ -2,6 +2,10 @@ import cv2
 
 
 class FrameIterator:
+    """
+    Класс-генератор, позволяющий пройтись по всем фрэймам видео.
+    """
+
     def __init__(self, video_name):
         self.video_name = video_name
 
@@ -12,7 +16,7 @@ class FrameIterator:
         return self
 
     def __exit__(self, exc_type, exc_val, exc_tb):
-        if hasattr(self, 'cap'):
+        if hasattr(self, "cap"):
             self.cap.release()
 
         return False
